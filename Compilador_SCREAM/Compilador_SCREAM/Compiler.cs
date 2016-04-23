@@ -35,7 +35,7 @@ namespace Compilador_SCREAM
         {
             //Main
             grammar.AddTokenType("main", "[M][A][I][N]");
-            grammar.AddTokenType("endMain", "[E][N][D][_][M][A][I][N]");
+            grammar.AddTokenType("endmain", "[E][N][D][_][M][A][I][N]");
 
             //Tipos de variáveis
             grammar.AddTokenType("int", "[I][N][T]");
@@ -47,17 +47,17 @@ namespace Compilador_SCREAM
 
             //Repetição
             grammar.AddTokenType("while", "[W][H][I][L][E]");
-            grammar.AddTokenType("end_while", "[E][N][D][_][W][H][I][L][E]");
+            grammar.AddTokenType("endwhile", "[E][N][D][_][W][H][I][L][E]");
             grammar.AddTokenType("loop", "[L][O][O][P]");
-            grammar.AddTokenType("end_loop", "[E][N][D][_][L][O][O][P]");
+            grammar.AddTokenType("endloop", "[E][N][D][_][L][O][O][P]");
             grammar.AddTokenType("foreach", "[F][O][R][E][A][C][H]");
-            grammar.AddTokenType("end_foreach", "[E][N][D][_][F][O][R][E][A][C][H]");
+            grammar.AddTokenType("endforeach", "[E][N][D][_][F][O][R][E][A][C][H]");
 
             //Condicional
             grammar.AddTokenType("if", "[I][F]");
             grammar.AddTokenType("elseif", "[E][L][S][E][I][F]");
             grammar.AddTokenType("else", "[E][L][S][E]");
-            grammar.AddTokenType("end_if", "[E][N][D][_][I][F]");
+            grammar.AddTokenType("endif", "[E][N][D][_][I][F]");
 
             //Função
             grammar.AddTokenType("funcao", "[_][a-zA-Z0-9]+[a-zA-Z0-9]*");
@@ -106,7 +106,7 @@ namespace Compilador_SCREAM
             grammar.AddTokenType("numero", "[0-9]+");
             grammar.AddTokenType("variavel", "[a-zA-Z]+[a-zA-Z0-9]*");
             grammar.AddTokenType("palavra", "[#].*[#]");
-            
+
 
             //grammar.AddTokenType("Operador", "[+]|[-]|[*]|[/]|[>]|[<]");
             lexicalAnalyser = new LexicalAnalyser(grammar);
@@ -120,6 +120,8 @@ namespace Compilador_SCREAM
         {
             grammar.AddVariable("initial");
             grammar.AddVariable("S");
+            grammar.AddVariable("MAIN");
+            grammar.AddVariable("BLOCO");
 
             grammar.AddVariable("VARTYPE");
 
@@ -151,16 +153,45 @@ namespace Compilador_SCREAM
             grammar.AddVariable("OPAUX");
             #endregion
 
+            #region Variáveis operações booleanas
 
+            grammar.AddVariable("OPBOOLTYPE");
+            grammar.AddVariable("OPBOOLIN");
+            grammar.AddVariable("OPBOOLCOND");
+            grammar.AddVariable("OPBOOL");
+            grammar.AddVariable("OPBOOLAUX");
 
-            //grammar.AddVariable("Q");
-            //grammar.AddVariable("A");
-            //grammar.AddVariable("T");
-            //grammar.AddVariable("C");
-            //grammar.AddVariable("P");
+            #endregion
+
+            #region Variáveis condicionais
+
+            grammar.AddVariable("IF");
+            grammar.AddVariable("ELSEIF");
+            grammar.AddVariable("ELSE");
+
+            #endregion
+
+            #region Variáveis Repetição
+
+            grammar.AddVariable("WHILE");
+            grammar.AddVariable("LOOP");
+
+            #endregion
+
+            #region Variáveis Função
+
+            grammar.AddVariable("PARAM");
+            grammar.AddVariable("RETURN");
+            grammar.AddVariable("ATRIBFUNC");
+            grammar.AddVariable("CHAMFUNC");
+            grammar.AddVariable("SENDPARAM");
+            grammar.AddVariable("FUNCAO");
+
+            #endregion
+
             grammar.AddRule("initial", "S");
 
-            grammar.AddRule("S", "OP");
+            grammar.AddRule("S", "MAIN");
 
             #region Regras Declaração
 
@@ -173,7 +204,7 @@ namespace Compilador_SCREAM
 
 
             // Declaração
-            grammar.AddRule("DEC", "VARTYPE variavel");
+            grammar.AddRule("DEC", "VARTYPE variavel ;");
             #endregion
 
             #region Regras Atribuição
@@ -200,15 +231,104 @@ namespace Compilador_SCREAM
             grammar.AddRule("OPTYPE", "mul");
             grammar.AddRule("OPTYPE", "div");
 
-            grammar.AddRule("OP", "numero OPAUX ;");
-            grammar.AddRule("OP", "numerofloat OPAUX ;");
-            grammar.AddRule("OP", "variavel OPAUX ;");
-            grammar.AddRule("OP", "( OP ) OPAUX ;");
+            grammar.AddRule("OP", "variavel = OP ;");
+            grammar.AddRule("OP", "numero OPAUX ");
+            grammar.AddRule("OP", "numero ");
+            grammar.AddRule("OP", "numerofloat OPAUX ");
+            grammar.AddRule("OP", "numerofloat ");
+            grammar.AddRule("OP", "variavel OPAUX ");
+            grammar.AddRule("OP", "variavel ");
+            grammar.AddRule("OP", "( OP ) OPAUX ");
+            grammar.AddRule("OP", "( OP ) ");
 
             grammar.AddRule("OPAUX", "OPTYPE OP");
-            grammar.AddRule("OPAUX", "");
 
             #endregion
+
+            #region Regras operações booleanas
+
+            grammar.AddRule("OPBOOLTYPE", "igual");
+            grammar.AddRule("OPBOOLTYPE", "diferente");
+            grammar.AddRule("OPBOOLTYPE", "maiorigual");
+            grammar.AddRule("OPBOOLTYPE", "menorigual");
+            grammar.AddRule("OPBOOLTYPE", "maior");
+            grammar.AddRule("OPBOOLTYPE", "menor");
+
+            grammar.AddRule("OPBOOLIN", "numero");
+            grammar.AddRule("OPBOOLIN", "numerofloat");
+            grammar.AddRule("OPBOOLIN", "variavel");
+
+            grammar.AddRule("OPBOOLCOND", "and");
+            grammar.AddRule("OPBOOLCOND", "or");
+
+            grammar.AddRule("OPBOOL", "OPBOOLIN");
+            grammar.AddRule("OPBOOL", "OPBOOLIN OPBOOLTYPE OPBOOLIN");
+            grammar.AddRule("OPBOOL", "OPBOOL OPBOOLAUX");
+            grammar.AddRule("OPBOOL", "not OPBOOL");
+
+            grammar.AddRule("OPBOOLAUX", "OPBOOLCOND OPBOOL");
+
+            #endregion
+
+            #region Regras Condicional
+
+            grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSEIF");
+            grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSE");
+            grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif");
+
+            grammar.AddRule("ELSEIF", " elseif ( OPBOOL ) BLOCO endif ELSEIF");
+            grammar.AddRule("ELSEIF", " elseif ( OPBOOL ) BLOCO endif ELSE");
+            grammar.AddRule("ELSEIF", " elseif ( OPBOOL ) BLOCO endif");
+
+            grammar.AddRule("ELSE", " else BLOCO endif");
+
+            #endregion
+
+            #region Regras Repetição
+
+            grammar.AddRule("WHILE", "while ( OPBOOL ) BLOCO endwhile");
+
+            grammar.AddRule("LOOP", "loop ( numero ) BLOCO endloop");
+
+            #endregion
+
+            #region Regras Função
+
+            grammar.AddRule("PARAM", "VARTYPE variavel PARAM");
+            grammar.AddRule("PARAM", "VARTYPE variavel");
+
+            grammar.AddRule("RETURN", " = variavel ;");
+            grammar.AddRule("RETURN", " = numero ;");
+
+            grammar.AddRule("ATRIBFUNC", " variavel = CHAMFUNC");
+            grammar.AddRule("CHAMFUNC", "funcao ( SENDPARAM )");
+            grammar.AddRule("SENDPARAM", "variavel , SENDPARAM ");
+            grammar.AddRule("SENDPARAM", "variavel");
+
+            grammar.AddRule("FUNCAO", "VARTYPE funcao { PARAM } BLOCO end FUNCAO");
+            grammar.AddRule("FUNCAO", "VARTYPE funcao { PARAM } BLOCO end");
+            #endregion
+
+            #region Regras Bloco
+
+            grammar.AddRule("BLOCO", "ATRIB");
+            grammar.AddRule("BLOCO", "ATRIB BLOCO");
+            grammar.AddRule("BLOCO", "DEC BLOCO");
+            grammar.AddRule("BLOCO", "DEC");
+            grammar.AddRule("BLOCO", "WHILE BLOCO");
+            grammar.AddRule("BLOCO", "WHILE");
+            grammar.AddRule("BLOCO", "IF BLOCO");
+            grammar.AddRule("BLOCO", "IF");
+            grammar.AddRule("BLOCO", "LOOP BLOCO");
+            grammar.AddRule("BLOCO", "LOOP");
+            grammar.AddRule("BLOCO", "CHAMFUNC BLOCO");
+            grammar.AddRule("BLOCO", "CHAMFUNC");
+            grammar.AddRule("BLOCO", "RETURN");
+
+            #endregion
+
+            grammar.AddRule("MAIN", "main { } BLOCO endmain FUNCAO");
+            grammar.AddRule("MAIN", "main { } BLOCO endmain");
 
             // Programa
 
@@ -262,9 +382,9 @@ namespace Compilador_SCREAM
                         word = "";
                     }
 
-                    else if(c=='.')
+                    else if (c == '.')
                     {
-                        if(!lastIsNum)
+                        if (!lastIsNum)
                         {
                             if (word != "")
                                 output.Add(word);
@@ -280,13 +400,13 @@ namespace Compilador_SCREAM
                         }
                     }
 
-                    else if (c == '_')
-                    {
-                        if (word != "")
-                            output.Add(word);
-                        word = "";
-                        word += c;
-                    }
+                    //else if (c == '_')
+                    //{
+                    //    if (word != "")
+                    //        output.Add(word);
+                    //    word = "";
+                    //    word += c;
+                    //}
 
                     else if (c == ' ' || c == '\r' || c == '\n' || c == '\t' || c == '\0')
                     {
@@ -304,7 +424,7 @@ namespace Compilador_SCREAM
 
                     lastIsNum = false;
 
-                    if(c >= '0' && c <= '9')
+                    if (c >= '0' && c <= '9')
                     {
                         lastIsNum = true;
                     }
@@ -314,8 +434,9 @@ namespace Compilador_SCREAM
                 {
                     word += c;
                 }
-                
+
             }
+            output.Add(word);
         }
 
         /// <summary>
