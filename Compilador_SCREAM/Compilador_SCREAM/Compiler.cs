@@ -160,6 +160,7 @@ namespace Compilador_SCREAM
             grammar.AddVariable("OPBOOLCOND");
             grammar.AddVariable("OPBOOL");
             grammar.AddVariable("OPBOOLAUX");
+            grammar.AddVariable("OPEND");
 
             #endregion
 
@@ -205,23 +206,27 @@ namespace Compilador_SCREAM
 
             // Declaração
             grammar.AddRule("DEC", "VARTYPE variavel ;");
+            grammar.AddRule("DEC", "VARTYPE ATRIB");
+            grammar.AddRule("DEC", "VARTYPE OP");
             #endregion
 
             #region Regras Atribuição
             //Atribuição
             grammar.AddRule("ATRIB", "variavel = ATRIBVAR ;");
-            grammar.AddRule("ATRIBINT", "numero");
-            grammar.AddRule("ATRIBFLOAT", "numerofloat");
-            grammar.AddRule("ATRIBBOOL", "boolon");
-            grammar.AddRule("ATRIBBOOL", "booloff");
-            grammar.AddRule("ATRIBCHAR", "letra");
-            grammar.AddRule("ATRIBSTRING", "palavra");
+            //grammar.AddRule("ATRIBINT", "numero");
+            //grammar.AddRule("ATRIBFLOAT", "numerofloat");
+            //grammar.AddRule("ATRIBBOOL", "boolon");
+            //grammar.AddRule("ATRIBBOOL", "booloff");
+            //grammar.AddRule("ATRIBCHAR", "letra");
+            //grammar.AddRule("ATRIBSTRING", "palavra");
 
-            grammar.AddRule("ATRIBVAR", "ATRIBINT");
-            grammar.AddRule("ATRIBVAR", "ATRIBFLOAT");
-            grammar.AddRule("ATRIBVAR", "ATRIBBOOL");
-            grammar.AddRule("ATRIBVAR", "ATRIBCHAR");
-            grammar.AddRule("ATRIBVAR", "ATRIBSTRING");
+            grammar.AddRule("ATRIBVAR", "variavel");
+            grammar.AddRule("ATRIBVAR", "numero");
+            grammar.AddRule("ATRIBVAR", "numerofloat");
+            grammar.AddRule("ATRIBVAR", "boolon");
+            grammar.AddRule("ATRIBVAR", "booloff");
+            grammar.AddRule("ATRIBVAR", "letra");
+            grammar.AddRule("ATRIBVAR", "palavra");
             #endregion
 
             #region Regras operação algébrica
@@ -231,17 +236,24 @@ namespace Compilador_SCREAM
             grammar.AddRule("OPTYPE", "mul");
             grammar.AddRule("OPTYPE", "div");
 
-            grammar.AddRule("OP", "variavel = OP ;");
-            grammar.AddRule("OP", "numero OPAUX ");
-            grammar.AddRule("OP", "numero ");
-            grammar.AddRule("OP", "numerofloat OPAUX ");
-            grammar.AddRule("OP", "numerofloat ");
-            grammar.AddRule("OP", "variavel OPAUX ");
-            grammar.AddRule("OP", "variavel ");
-            grammar.AddRule("OP", "( OP ) OPAUX ");
-            grammar.AddRule("OP", "( OP ) ");
+            grammar.AddRule("OP", "variavel = ATRIBINT OPAUX ;");
+            grammar.AddRule("OP", "variavel = ATRIBFLOAT OPAUX ;");
+            grammar.AddRule("OP", "variavel = variavel OPAUX ;");
+            //grammar.AddRule("OP", "numero OPAUX ");
+            //grammar.AddRule("OP", "numero ");
+            //grammar.AddRule("OP", "numerofloat OPAUX ");
+            //grammar.AddRule("OP", "numerofloat ");
+            //grammar.AddRule("OP", "variavel OPAUX ");
+            //grammar.AddRule("OP", "variavel ");
+            //grammar.AddRule("OP", "( OP ) OPAUX ");
+            //grammar.AddRule("OP", "( OP ) ");
 
-            grammar.AddRule("OPAUX", "OPTYPE OP");
+            grammar.AddRule("OPAUX", "OPTYPE OPEND");
+
+            grammar.AddRule("OPEND", "numero");
+            grammar.AddRule("OPEND", "numerofloat");
+            grammar.AddRule("OPEND", "variavel");
+            grammar.AddRule("OPEND", "OPAUX");
 
             #endregion
 
@@ -294,14 +306,14 @@ namespace Compilador_SCREAM
 
             #region Regras Função
 
-            grammar.AddRule("PARAM", "VARTYPE variavel PARAM");
+            grammar.AddRule("PARAM", "VARTYPE variavel , PARAM");
             grammar.AddRule("PARAM", "VARTYPE variavel");
 
             grammar.AddRule("RETURN", " = variavel ;");
             grammar.AddRule("RETURN", " = numero ;");
 
             grammar.AddRule("ATRIBFUNC", " variavel = CHAMFUNC");
-            grammar.AddRule("CHAMFUNC", "funcao ( SENDPARAM )");
+            grammar.AddRule("CHAMFUNC", "funcao ( SENDPARAM ) ;");
             grammar.AddRule("SENDPARAM", "variavel , SENDPARAM ");
             grammar.AddRule("SENDPARAM", "variavel");
 
@@ -313,6 +325,8 @@ namespace Compilador_SCREAM
 
             grammar.AddRule("BLOCO", "ATRIB");
             grammar.AddRule("BLOCO", "ATRIB BLOCO");
+            grammar.AddRule("BLOCO", "OP");
+            grammar.AddRule("BLOCO", "OP BLOCO");
             grammar.AddRule("BLOCO", "DEC BLOCO");
             grammar.AddRule("BLOCO", "DEC");
             grammar.AddRule("BLOCO", "WHILE BLOCO");
@@ -436,7 +450,8 @@ namespace Compilador_SCREAM
                 }
 
             }
-            output.Add(word);
+            if(word != "")
+                output.Add(word);
         }
 
         /// <summary>
