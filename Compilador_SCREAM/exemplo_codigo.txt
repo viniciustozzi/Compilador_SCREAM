@@ -1,0 +1,58 @@
+MAIN {}
+	
+
+	INT x;
+	
+	INT a;
+	
+	INT b;
+	
+	BOOL banana;
+	
+
+	banana = ON;
+
+	
+	a = 2;
+	
+	b=3;
+
+	
+	
+	IF(banana)
+		
+
+		x = a ADD b;
+	
+
+	END_IF
+	
+	
+
+	WHILE(x GE 2)
+		
+		x = x SUB 1;
+	
+	END_WHILE
+
+
+	
+	_loopando(x);
+
+
+END_MAIN
+
+
+
+FLOAT _loopando{INT x}
+	
+	LOOP(10)
+		
+		x = x MUL 2;
+	
+	END_LOOP
+
+	
+	= x;
+
+END_loopando

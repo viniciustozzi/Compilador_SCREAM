@@ -133,6 +133,7 @@ namespace Compilador_SCREAM
             grammar.AddVariable("DECCHAR");
             grammar.AddVariable("DECBOOL");
             grammar.AddVariable("DECSTRING");
+            grammar.AddVariable("ARRAY");
             #endregion
 
             #region Variáveis Atribuicao
@@ -202,6 +203,7 @@ namespace Compilador_SCREAM
             grammar.AddRule("VARTYPE", "char");
             grammar.AddRule("VARTYPE", "bool");
             grammar.AddRule("VARTYPE", "string");
+            grammar.AddRule("ARRAY", "array");
 
 
             // Declaração
