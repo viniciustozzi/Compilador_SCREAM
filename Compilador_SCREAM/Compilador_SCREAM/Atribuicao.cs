@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Compilador_SCREAM
 {
-    public class Atribuicao : Instrucao
+    class Atribuicao : Instrucao
     {
         public string NomeVariavel { get; set; }
         public string Valor { get; set; }
 
         public override string ToCode()
         {
-            return NomeVariavel + " = " + Valor + ";";
+            return NomeVariavel + " = " + Valor;
         }
     }
 }
