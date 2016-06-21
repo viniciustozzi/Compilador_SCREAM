@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace Compilador_SCREAM
 {
-    public class Loop : Instrucao
+    public class Main : Instrucao
     {
         /// <summary>
-        /// Number of iterations that this loop will execute
+        /// Para a main, o bloco deve ter retorno especificado (inteiro)
         /// </summary>
-        public string Number { get; set; }
-
         public Bloco bloco { get; set; }
-
+        
         public override string ToCode()
         {
-            return "int i = 0; for (i = 0; i < " + Number + "; i++)" + bloco.ToCode(); 
+            return "int main()" + bloco.ToCode();
         }
     }
 }

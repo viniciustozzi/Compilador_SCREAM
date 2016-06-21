@@ -17,8 +17,7 @@ namespace Compilador_SCREAM
         /// Nome da variável a ser declarada
         /// </summary>
         public string Nome { get; set; }
-
-
+        
         public override string ToCode()
         {
             return Tipo + " " + Nome + ";";
