@@ -569,7 +569,11 @@ namespace Compilador_SCREAM
                     instrucao.AddRange(BlocoToInstrucao(d.ChildNodes[1]));
                 }
             }
-
+            
+            if (d.ChildNodes[0].Rule.Variable == "IF")
+            {
+                CondicionalToInstrucao(d);
+            }
 
             return instrucao;
         }
@@ -580,5 +584,48 @@ namespace Compilador_SCREAM
 
             return d;
         }
+
+        private If CondicionalToInstrucao(DerivationNode derivationNode)
+        {
+            Bloco blocos = null;
+            Expressao exp = null;
+
+            if (derivationNode.ChildNodes[2].Rule.Variable == "OPBOOL")
+            {
+                exp = ExpressaoBoolToInstrucao(derivationNode.ChildNodes[2]);
+            } 
+            
+            if (derivationNode.ChildNodes[4].Rule.Variable == "BLOCO")
+            {
+                //blocos = BlocoToInstrucao(derivationNode.ChildNodes[4]);
+                
+            }
+
+            return new If(exp, blocos);
+        }
+        
+        private Expressao ExpressaoBoolToInstrucao(DerivationNode d)
+        {
+            if (d.ChildNodes[0].Rule.Variable == "OPBOOLIN")
+            {
+                
+            }   
+
+            //return new Expressao()
+        }
+
+
+        //grammar.AddRule("OPBOOLIN", "numero");
+        //    grammar.AddRule("OPBOOLIN", "numerofloat");
+        //    grammar.AddRule("OPBOOLIN", "variavel");
+
+        //grammar.AddRule("OPBOOL", "OPBOOLIN");
+        //    grammar.AddRule("OPBOOL", "OPBOOLIN OPBOOLTYPE OPBOOLIN");
+        //    grammar.AddRule("OPBOOL", "OPBOOL OPBOOLAUX");
+        //    grammar.AddRule("OPBOOL", "not OPBOOL");
+
+        //grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSEIF");
+        //    grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSE");
+            //grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif");
     }
 }
