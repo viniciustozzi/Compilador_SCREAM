@@ -490,7 +490,48 @@ namespace Compilador_SCREAM
             // Cria árvore de derivação..
             DerivationTree = new DerivationTree(AnalyserStrategy.BottomUp);
             DerivationTree.AddMovements(stackMovements);
+
+            generateCode();
+
             return accepted;
+        }
+
+        private void generateCode()
+        {
+            //initial -> S
+            geraProg(DerivationTree.BaseNode.ChildNodes[0]);
+
+            ProgTotal prog = new ProgTotal();
+        }
+
+        
+        //S-> MAIN
+        public ProgTotal geraProg(DerivationNode inicial)
+        {
+            if (inicial == null)
+                return new ProgTotal()
+                {
+                    Instrucoes = new List<Instrucao>()
+                };
+
+            List<Instrucao> main = gerarMain(inicial.ChildNodes[0]);
+            ProgTotal prog = new ProgTotal() { Instrucoes = main };
+            return prog;
+            //if ()
+        }
+
+        //MAIN -> main { } BLOCO endmain FUNCAO || main { } BLOCO endmain
+        
+        private List<Instrucao> gerarMain(DerivationNode derivationNode)
+        {
+            List<Instrucao> main = new List<Instrucao>();
+
+            foreach (DerivationNode d in derivationNode.ChildNodes)
+            {
+                
+            }
+
+            return null;
         }
     }
 }
