@@ -26,7 +26,7 @@ namespace Compilador_SCREAM
 
         public override string ToCode()
         {
-            return Tipo + " " + Nome + ";";
+            return Tipo + " " + Nome + ";\n";
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Compilador_SCREAM
 {
@@ -286,15 +287,15 @@ namespace Compilador_SCREAM
 
             #region Regras Condicional
 
-            grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSEIF");
-            grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSE");
+            grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSEIF endif");
+            grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSE endif");
             grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif");
 
-            grammar.AddRule("ELSEIF", " elseif ( OPBOOL ) BLOCO endif ELSEIF");
-            grammar.AddRule("ELSEIF", " elseif ( OPBOOL ) BLOCO endif ELSE");
-            grammar.AddRule("ELSEIF", " elseif ( OPBOOL ) BLOCO endif");
+            grammar.AddRule("ELSEIF", " elseif ( OPBOOL ) BLOCO endif ELSEIF endif");
+            grammar.AddRule("ELSEIF", " elseif ( OPBOOL ) BLOCO endif ELSE endif");
+            grammar.AddRule("ELSEIF", " elseif ( OPBOOL ) BLOCO ");
 
-            grammar.AddRule("ELSE", " else BLOCO endif");
+            grammar.AddRule("ELSE", " else BLOCO ");
 
             #endregion
 
@@ -368,6 +369,15 @@ namespace Compilador_SCREAM
             // Cria o analisador LR1..
             lalrAnalyser = new LR1Analyser(grammar, first, null, null);
             lalrAnalyser.Compute();
+        }
+
+        public string generateCode()
+        {
+            //initial -> S
+
+
+            ProgTotal prog = geraProg(DerivationTree.BaseNode.ChildNodes[0]);
+            return "int main(){\r\n" + prog.ToCode() + "\r\n}";
         }
 
         /// <summary>
@@ -491,18 +501,19 @@ namespace Compilador_SCREAM
             DerivationTree = new DerivationTree(AnalyserStrategy.BottomUp);
             DerivationTree.AddMovements(stackMovements);
 
-            generateCode();
+            string code = generateCode();
+
+            MessageBox.Show(code);
 
             return accepted;
         }
 
-        private void generateCode()
-        {
-            //initial -> S
-            geraProg(DerivationTree.BaseNode.ChildNodes[0]);
+        //private void generateCode()
+        //{
+        //    //initial -> S
 
-            ProgTotal prog = new ProgTotal();
-        }
+        //    ProgTotal prog = geraProg(DerivationTree.BaseNode.ChildNodes[0]);
+        //}
 
         
         //S-> MAIN
@@ -530,7 +541,7 @@ namespace Compilador_SCREAM
             {
                 if(d.Rule != null && d.Rule.Variable == "BLOCO")
                 {
-                    main.AddRange(BlocoToInstrucao(d));
+                    main.AddRange(BlocoToInstrucao(d).Instrucoes);
                 }
 
                 else if(d.Rule != null && d.Rule.Variable == "FUNCAO")
@@ -548,35 +559,87 @@ namespace Compilador_SCREAM
         }
 
         // BLOCO -> ATRIB | OP | DEC | WHILE | IF | LOOP | CHAMFUNC | RETURN | qualquer coisa BLOCO
-        private List<Instrucao> BlocoToInstrucao(DerivationNode d)
+        private Bloco BlocoToInstrucao(DerivationNode d)
         {
             List<Instrucao> instrucao = new List<Instrucao>();
 
-            if(d.ChildNodes[0].Rule.Variable == "DEC")
+            if (d.ChildNodes[0].Rule.Variable == "DEC")
             {
                 instrucao.Add(DecToInstrucao(d.ChildNodes[0]));
             }
 
-            else if(d.ChildNodes[0].Rule.Variable == "OP")
+            else if (d.ChildNodes[0].Rule.Variable == "OP")
             {
-
+                instrucao.Add(OpToInstrucao(d.ChildNodes[0]));
             }
 
-            if(d.ChildNodes.Count > 1)
+            else if (d.ChildNodes[0].Rule.Variable == "ATRIB")
+            {
+                instrucao.Add(OpToInstrucao(d.ChildNodes[0]));
+            }
+
+            else if (d.ChildNodes[0].Rule.Variable == "IF")
+            {
+                instrucao.Add(CondicionalToInstrucao(d.ChildNodes[0]));
+            }
+
+            else if (d.ChildNodes[0].Rule.Variable == "WHILE")
+            {
+                instrucao.Add(WhileToInstrucao(d.ChildNodes[0]));
+            }
+
+            else if (d.ChildNodes[0].Rule.Variable == "LOOP")
+            {
+                instrucao.Add(LoopToInstrucao(d.ChildNodes[0]));
+            }
+
+            if (d.ChildNodes.Count > 1)
             {
                 if(d.ChildNodes[1].Rule.Variable == "BLOCO")
                 {
-                    instrucao.AddRange(BlocoToInstrucao(d.ChildNodes[1]));
+                    instrucao.AddRange(BlocoToInstrucao(d.ChildNodes[1]).Instrucoes);
                 }
             }
             
-            if (d.ChildNodes[0].Rule.Variable == "IF")
+
+            return new Bloco(instrucao);
+        }
+
+        private Loop LoopToInstrucao(DerivationNode derivationNode)
+        {
+
+            return new Loop(derivationNode.ChildNodes[2].Token.Value, BlocoToInstrucao(derivationNode.ChildNodes[4]));
+        
+        }
+
+
+        //grammar.AddRule("LOOP", "loop ( numero ) BLOCO endloop");
+
+        private While WhileToInstrucao(DerivationNode derivationNode)
+        {
+            Expressao exp = ExpressaoBoolToInstrucao(derivationNode.ChildNodes[2]);
+            Bloco bloco = BlocoToInstrucao(derivationNode.ChildNodes[4]);
+
+            return new While(exp, bloco);
+        }
+        
+
+        private Atribuicao OpToInstrucao(DerivationNode d)
+        {
+            string value = "";
+
+            if(d.ChildNodes.Count > 4)
+                value = new OperacaoAlgebrica(d.ChildNodes[2].Token.Value, d.ChildNodes[3].ChildNodes[1].ChildNodes[0].Token.Value, d.ChildNodes[3].ChildNodes[0].ChildNodes[0].Token.Type.Description).ToCode();
+            
+            else
             {
-                CondicionalToInstrucao(d);
+                value += d.ChildNodes[2].ChildNodes[0].Token.Value;
             }
 
-            return instrucao;
-        }
+            Atribuicao a = new Atribuicao(d.ChildNodes[0].Token.Value, value);
+
+            return a;
+        } 
 
         private Instrucao DecToInstrucao(DerivationNode derivationNode)
         {
@@ -589,6 +652,7 @@ namespace Compilador_SCREAM
         {
             Bloco blocos = null;
             Expressao exp = null;
+            If otherIf = null;
 
             if (derivationNode.ChildNodes[2].Rule.Variable == "OPBOOL")
             {
@@ -597,35 +661,38 @@ namespace Compilador_SCREAM
             
             if (derivationNode.ChildNodes[4].Rule.Variable == "BLOCO")
             {
-                //blocos = BlocoToInstrucao(derivationNode.ChildNodes[4]);
+                blocos = BlocoToInstrucao(derivationNode.ChildNodes[4]);
                 
             }
 
-            return new If(exp, blocos);
+            if (derivationNode.ChildNodes.Count > 6)
+            {
+                if ((derivationNode.ChildNodes[6].Rule.Variable == "ELSEIF" || derivationNode.ChildNodes[6].Rule.Variable == "ELSE"))
+                {
+                    otherIf = CondicionalToInstrucao(derivationNode.ChildNodes[6]);
+                }
+            }
+
+            return new If(exp, blocos, otherIf);
         }
         
         private Expressao ExpressaoBoolToInstrucao(DerivationNode d)
         {
+            string var1 = "", var2 = "";
             if (d.ChildNodes[0].Rule.Variable == "OPBOOLIN")
             {
-                
-            }   
+                var1 += d.ChildNodes[2].ChildNodes[0].Token.Value;
+            }
+
+            if (d.ChildNodes[2].Rule.Variable == "OPBOOLIN")
+            {
+                var2 += d.ChildNodes[0].ChildNodes[0].Token.Value;
+            }
+
 
             //return new Expressao()
+            return new Expressao(var1, var2, d.ChildNodes[1].ChildNodes[0].Token.Type.Description);
         }
-
-
-        //grammar.AddRule("OPBOOLIN", "numero");
-        //    grammar.AddRule("OPBOOLIN", "numerofloat");
-        //    grammar.AddRule("OPBOOLIN", "variavel");
-
-        //grammar.AddRule("OPBOOL", "OPBOOLIN");
-        //    grammar.AddRule("OPBOOL", "OPBOOLIN OPBOOLTYPE OPBOOLIN");
-        //    grammar.AddRule("OPBOOL", "OPBOOL OPBOOLAUX");
-        //    grammar.AddRule("OPBOOL", "not OPBOOL");
-
-        //grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSEIF");
-        //    grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif ELSE");
-            //grammar.AddRule("IF", " if ( OPBOOL ) BLOCO endif");
+       
     }
 }

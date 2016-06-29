@@ -6,11 +6,6 @@ MAIN {}
 	INT a;
 	
 	INT b;
-	
-	BOOL banana;
-	
-
-	banana = ON;
 
 	
 	a = 2;
@@ -19,7 +14,7 @@ MAIN {}
 
 	
 	
-	IF(banana)
+	IF(a GE b)
 		
 
 		x = a ADD b;
@@ -37,22 +32,10 @@ MAIN {}
 
 
 	
-	_loopando(x);
-
-
-END_MAIN
-
-
-
-FLOAT _loopando{INT x}
-	
 	LOOP(10)
 		
 		x = x MUL 2;
 	
 	END_LOOP
 
-	
-	= x;
-
-END_loopando
+END_MAIN

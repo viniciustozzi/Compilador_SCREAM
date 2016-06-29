@@ -23,7 +23,7 @@ namespace Compilador_SCREAM
 
         public override string ToCode()
         {
-            return "int i = 0; for (i = 0; i < " + Number + "; i++)" + bloco.ToCode(); 
+            return "int i = 0;\n for (i = 0; i < " + Number + "; i++)" + bloco.ToCode(); 
         }
     }
 }

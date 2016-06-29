@@ -25,7 +25,7 @@ namespace Compilador_SCREAM
 
         public override string ToCode()
         {
-            string blocoResult = "{ ";
+            string blocoResult = "{\n ";
 
             foreach (Instrucao inst in Instrucoes)
             {
@@ -35,7 +35,7 @@ namespace Compilador_SCREAM
             //if (Retorno != string.Empty)
             //    blocoResult += "return " + Retorno + ";";
 
-            blocoResult += " }";
+            blocoResult += " }\n";
 
             return blocoResult;
         }

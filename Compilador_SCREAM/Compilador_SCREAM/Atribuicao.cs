@@ -19,7 +19,7 @@ namespace Compilador_SCREAM
 
         public override string ToCode()
         {
-            return NomeVariavel + " = " + Valor + ";";
+            return NomeVariavel + " = " + Valor + ";\n";
         }
     }
 }

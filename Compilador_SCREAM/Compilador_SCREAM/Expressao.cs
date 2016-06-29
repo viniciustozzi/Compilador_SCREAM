@@ -16,12 +16,22 @@ namespace Compilador_SCREAM
         {
             Variavel_1 = var1;
             Variavel_2 = var2;
-            Operador = operador;
+
+            switch (operador)
+            {
+                case "igual": Operador = "=="; break;
+                case "diferente": Operador = "!="; break;
+                case "maiorigual": Operador = ">="; break;
+                case "menorigual": Operador = "<="; break;
+                case "maior": Operador = ">"; break;
+                case "menor": Operador = "<"; break;
+                    
+            }
         }
 
         public override string ToCode()
         {
-            return Variavel_1 + " " + Operador + " " + Variavel_1;
+            return Variavel_1 + " " + Operador + " " + Variavel_2;
         }
     }
 }
