@@ -18,6 +18,12 @@ namespace Compilador_SCREAM
         /// </summary>
         public string Retorno { get; set; }
 
+        public Bloco(List<Instrucao> listInstrucoes, string retorno)
+        {
+            Instrucoes = listInstrucoes;
+            Retorno = retorno;
+        }
+
         public override string ToCode()
         {
             string blocoResult = "{ ";

@@ -18,6 +18,12 @@ namespace Compilador_SCREAM
         /// </summary>
         public string Nome { get; set; }
         
+        public Declaracao(string tipoVariavel, string nomeVariavel)
+        {
+            Tipo = tipoVariavel;
+            Nome = nomeVariavel;
+        }
+
         public override string ToCode()
         {
             return Tipo + " " + Nome + ";";
