@@ -13,6 +13,14 @@ namespace Compilador_SCREAM
         public string NomeFuncao { get; set; }
         public List<ParameterInfo> parameters { get; set; }
 
+        public Function(string tipoRetorno, Bloco blocoInstrucoes, string nomeFuncao, List<ParameterInfo> parametros)
+        {
+            Tipo = tipoRetorno;
+            bloco = blocoInstrucoes;
+            NomeFuncao = nomeFuncao;
+            parameters = parametros;
+        }
+
         public override string ToCode()
         {
             string resultFunction = string.Empty;

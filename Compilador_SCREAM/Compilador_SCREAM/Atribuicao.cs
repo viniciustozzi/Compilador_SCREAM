@@ -11,6 +11,12 @@ namespace Compilador_SCREAM
         public string NomeVariavel { get; set; }
         public string Valor { get; set; }
 
+        public Atribuicao(string nomeVariavel, string valor)
+        {
+            this.NomeVariavel = nomeVariavel;
+            this.Valor = valor;
+        }
+
         public override string ToCode()
         {
             return NomeVariavel + " = " + Valor;

@@ -15,6 +15,12 @@ namespace Compilador_SCREAM
 
         public Bloco bloco { get; set; }
 
+        public Loop(string numberOfIterations, Bloco blocoInstrucoes)
+        {
+            Number = numberOfIterations;
+            bloco = blocoInstrucoes;
+        }
+
         public override string ToCode()
         {
             return "int i = 0; for (i = 0; i < " + Number + "; i++)" + bloco.ToCode(); 

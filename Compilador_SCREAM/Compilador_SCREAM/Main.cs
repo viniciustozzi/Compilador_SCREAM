@@ -13,6 +13,15 @@ namespace Compilador_SCREAM
         /// </summary>
         public Bloco bloco { get; set; }
         
+        /// <summary>
+        /// Bloco de instrucoes pertencentes a main
+        /// </summary>
+        /// <param name="blocoMain"></param>
+        public Main(Bloco blocoMain)
+        {
+            bloco = blocoMain;
+        }
+
         public override string ToCode()
         {
             return "int main()" + bloco.ToCode();

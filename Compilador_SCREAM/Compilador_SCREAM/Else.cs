@@ -10,6 +10,11 @@ namespace Compilador_SCREAM
     {
         public Bloco bloco { get; set; }
 
+        public Else(Bloco blocoInstrucoes)
+        {
+            bloco = blocoInstrucoes;
+        }
+
         public override string ToCode()
         {
             return "else" + bloco.ToCode();

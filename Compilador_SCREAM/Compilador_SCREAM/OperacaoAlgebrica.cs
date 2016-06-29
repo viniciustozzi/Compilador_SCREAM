@@ -12,6 +12,13 @@ namespace Compilador_SCREAM
         public string Operador { get; set; }
         public string Variavel_2 { get; set; }
 
+        public OperacaoAlgebrica(string var1, string var2, string operador)
+        {
+            Variavel_1 = var1;
+            Variavel_2 = var2;
+            Operador = operador;
+        }
+
         public override string ToCode()
         {
             return Variavel_1 + " " + Operador + " " + Variavel_2 + ";";
