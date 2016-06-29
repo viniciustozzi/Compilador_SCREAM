@@ -548,37 +548,105 @@ namespace Compilador_SCREAM
         }
 
         // BLOCO -> ATRIB | OP | DEC | WHILE | IF | LOOP | CHAMFUNC | RETURN | qualquer coisa BLOCO
-        private List<Instrucao> BlocoToInstrucao(DerivationNode d)
+        private Bloco BlocoToInstrucao(DerivationNode d)
         {
             List<Instrucao> instrucao = new List<Instrucao>();
 
-            if(d.ChildNodes[0].Rule.Variable == "DEC")
+            if (d.ChildNodes[0].Rule.Variable == "DEC")
             {
                 instrucao.Add(DecToInstrucao(d.ChildNodes[0]));
             }
 
-            else if(d.ChildNodes[0].Rule.Variable == "OP")
+            else if (d.ChildNodes[0].Rule.Variable == "OP")
             {
-
+                instrucao.Add(OpToInstrucao(d.ChildNodes[0]));
             }
 
-            if(d.ChildNodes.Count > 1)
+            if (d.ChildNodes.Count > 1)
             {
-                if(d.ChildNodes[1].Rule.Variable == "BLOCO")
+                if (d.ChildNodes[1].Rule.Variable == "BLOCO")
                 {
-                    instrucao.AddRange(BlocoToInstrucao(d.ChildNodes[1]));
+                    instrucao.AddRange(BlocoToInstrucao(d.ChildNodes[1]).Instrucoes);
                 }
             }
 
 
-            return instrucao;
+            return new Bloco(instrucao);
         }
 
+        // OP -> variavel = ATRIBINT OPAUX | variavel = variavel OPAUX | variavel = ATRIBFLOAT OPAUX
+        private Instrucao OpToInstrucao(DerivationNode derivationNode)
+        {
+            string valor = "";
+
+            if (derivationNode.ChildNodes[2].Token.Type.Description != "variavel")
+            {
+
+            }
+
+            valor += OpAux(derivationNode.ChildNodes[3]);
+
+            Atribuicao a = new Atribuicao(derivationNode.ChildNodes[0].Token.Value, valor);
+
+            return a;
+        }
+
+        //grammar.AddRule("OPTYPE", "add");
+        //grammar.AddRule("OPTYPE", "sub");
+        //grammar.AddRule("OPTYPE", "mul");
+        //grammar.AddRule("OPTYPE", "div");
+
+        //grammar.AddRule("OP", "variavel = ATRIBINT OPAUX ;");
+        //grammar.AddRule("OP", "variavel = ATRIBFLOAT OPAUX ;");
+        //grammar.AddRule("OP", "variavel = variavel OPAUX ;");
+
+        //grammar.AddRule("OPAUX", "OPTYPE OPEND");
+
+        //grammar.AddRule("OPEND", "numero");
+        //grammar.AddRule("OPEND", "numerofloat");
+        //grammar.AddRule("OPEND", "variavel");
+        //grammar.AddRule("OPEND", "OPAUX");
+
+        private string OpAux(DerivationNode d)
+        {
+            string value = "";
+
+            value += d.ChildNodes[0].Token.Type.Description;
+
+            if (d.ChildNodes[1].Rule.Variable == "OPAUX")
+                value += OpAux(d.ChildNodes[1]);
+
+            else
+                value += d.ChildNodes[0].Token.Type.Description;
+
+            return value;
+        }
+
+        // DEC -> VARTYPE variavel | VARTYPE OP | VARTYPE ATRIB
         private Instrucao DecToInstrucao(DerivationNode derivationNode)
         {
-            Declaracao d = new Declaracao(derivationNode.ChildNodes[0].ChildNodes[0].Token.Type.Description, derivationNode.ChildNodes[1].Token.Value);
+            Declaracao d;
+            if (derivationNode.ChildNodes[1].Rule != null && derivationNode.ChildNodes[1].Rule.Variable == "ATRIB")
+            {
+                AtribToInstrucao(derivationNode.ChildNodes[1]);
+            }
+
+            else if (derivationNode.ChildNodes[1].Rule != null && derivationNode.ChildNodes[1].Rule.Variable == "OP")
+            {
+
+            }
+
+            else
+            {
+                d = new Declaracao(derivationNode.ChildNodes[0].ChildNodes[0].Token.Type.Description, derivationNode.ChildNodes[1].Token.Value);
+            }
 
             return d;
+        }
+
+        private void AtribToInstrucao(DerivationNode derivationNode)
+        {
+            throw new NotImplementedException();
         }
     }
 }

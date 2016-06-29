@@ -18,10 +18,9 @@ namespace Compilador_SCREAM
         /// </summary>
         public string Retorno { get; set; }
 
-        public Bloco(List<Instrucao> listInstrucoes, string retorno)
+        public Bloco(List<Instrucao> listInstrucoes)
         {
             Instrucoes = listInstrucoes;
-            Retorno = retorno;
         }
 
         public override string ToCode()
@@ -33,8 +32,8 @@ namespace Compilador_SCREAM
                 blocoResult += inst.ToCode();
             }
 
-            if (Retorno != string.Empty)
-                blocoResult += "return " + Retorno + ";";
+            //if (Retorno != string.Empty)
+            //    blocoResult += "return " + Retorno + ";";
 
             blocoResult += " }";
 

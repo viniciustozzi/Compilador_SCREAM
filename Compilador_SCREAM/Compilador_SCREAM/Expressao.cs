@@ -21,7 +21,7 @@ namespace Compilador_SCREAM
 
         public override string ToCode()
         {
-            return Variavel_1 + " " + Operador + " " + Variavel_1 + ";";
+            return Variavel_1 + " " + Operador + " " + Variavel_1;
         }
     }
 }
