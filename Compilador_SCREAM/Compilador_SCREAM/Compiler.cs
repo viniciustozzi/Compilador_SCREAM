@@ -528,10 +528,57 @@ namespace Compilador_SCREAM
 
             foreach (DerivationNode d in derivationNode.ChildNodes)
             {
-                
+                if(d.Rule != null && d.Rule.Variable == "BLOCO")
+                {
+                    main.AddRange(BlocoToInstrucao(d));
+                }
+
+                else if(d.Rule != null && d.Rule.Variable == "FUNCAO")
+                {
+                    main.AddRange(FuncaoToInstrucao(d));
+                }
             }
 
-            return null;
+            return main;
+        }
+
+        private List<Instrucao> FuncaoToInstrucao(DerivationNode d)
+        {
+            throw new NotImplementedException();
+        }
+
+        // BLOCO -> ATRIB | OP | DEC | WHILE | IF | LOOP | CHAMFUNC | RETURN | qualquer coisa BLOCO
+        private List<Instrucao> BlocoToInstrucao(DerivationNode d)
+        {
+            List<Instrucao> instrucao = new List<Instrucao>();
+
+            if(d.ChildNodes[0].Rule.Variable == "DEC")
+            {
+                instrucao.Add(DecToInstrucao(d.ChildNodes[0]));
+            }
+
+            else if(d.ChildNodes[0].Rule.Variable == "OP")
+            {
+
+            }
+
+            if(d.ChildNodes.Count > 1)
+            {
+                if(d.ChildNodes[1].Rule.Variable == "BLOCO")
+                {
+                    instrucao.AddRange(BlocoToInstrucao(d.ChildNodes[1]));
+                }
+            }
+
+
+            return instrucao;
+        }
+
+        private Instrucao DecToInstrucao(DerivationNode derivationNode)
+        {
+            Declaracao d = new Declaracao(derivationNode.ChildNodes[0].ChildNodes[0].Token.Type.Description, derivationNode.ChildNodes[1].Token.Value);
+
+            return d;
         }
     }
 }

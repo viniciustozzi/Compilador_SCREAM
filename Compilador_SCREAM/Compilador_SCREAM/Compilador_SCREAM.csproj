@@ -35,7 +35,7 @@
   <ItemGroup>
     <Reference Include="Compiler.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Users\Waldir\Downloads\Compiler.Core\Compiler.Core.dll</HintPath>
+      <HintPath>..\..\..\..\Users\liga\Downloads\Compiler.Core\Compiler.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
